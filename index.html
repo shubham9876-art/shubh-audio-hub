@@ -1,0 +1,225 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shubh Audio Hub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" />
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="nav__header">
+      <div class="nav__logo">
+          <!-- <button id="theme-toggle" class="btn">Dark Mode</button> -->
+        <a href="#"><img src="assets/logo-white.png" alt="logo" class="logo-white" /></a>
+        <a href="#"><img src="assets/logo-dark.png" alt="logo" class="logo-dark" /></a>
+        
+      </div>
+      <div class="nav__menu__btn" id="menu-btn">
+        <i class="ri-menu-line"></i>
+      </div>
+    </div>
+    <ul class="nav__links" id="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Product</a></li>
+      <li><a href="#">Store</a></li>
+      <li><a href="#" class="btn">Buy Now</a></li>
+      <li>
+        <a href="#" id="cart-btn">
+          <i class="ri-shopping-cart-line"></i>
+          <span id="cart-count">0</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <header class="section__container header__container">
+    <div class="nav__links" id="nav-links"></div>
+    <div class="header__image">
+      <img src="assets/header.png" alt="header" />
+      <img src="assets/header-bg.png" alt="header-bg" class="header-bg" />
+      <div class="header__image__content">
+        <h4>Price: $100</h4>
+        <button class="btn add-to-cart" data-model="00010" data-price="100">Add to cart</button>
+      </div>
+    </div>
+    <div class="header__content">
+      <h1>Bluetooth<br />Headphone</h1>
+      <p>
+        Dive into our curated selection of premium Bluetooth headphones,
+        crafted for the ultimate listening experience.
+      </p>
+    </div>
+  </header>
+
+  <section class="section__container product__container">
+    <div class="product__grid">
+      <div class="product__image">
+        <img src="assets/product.png" alt="product" />
+      </div>
+      <div class="product__content">
+        <div class="product__card">
+          <h4>Bluetooth</h4>
+          <p>Bluetooth 4.2 - ACC codec</p>
+          <a href="#">Learn More</a>
+        </div>
+        <div class="product__card">
+          <h4>Quality sound</h4>
+          <a href="#">Learn More</a>
+        </div>
+        <div class="product__card">
+          <div class="product__colors">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+          </div>
+          <p>Available colors</p>
+        </div>
+      </div>
+    </div>
+    <div class="product__btn">
+      <button class="btn add-to-cart" data-model="00010" data-price="100">Add to cart</button>
+    </div>
+  </section>
+
+  <section class="section__container store__container">
+    <h2>JBL beats design</h2>
+    <p>
+      Explore our JBL Beats Design collection, where style meets superior
+      audio performance.
+    </p>
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="store__card">
+            <img src="assets/store-1.png" alt="product" />
+            <h4>Model no- 00035</h4>
+            <h3>Price- $120</h3>
+            <button class="btn add-to-cart" data-model="00035" data-price="120">Add to cart</button>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="store__card">
+            <img src="assets/store-2.png" alt="product" />
+            <h4>Model no- 00045</h4>
+            <h3>Price- $130</h3>
+            <button class="btn add-to-cart" data-model="00045" data-price="130">Add to cart</button>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="store__card">
+            <img src="assets/store-3.png" alt="product" />
+            <h4>Model no- 00025</h4>
+            <h3>Price- $110</h3>
+            <button class="btn add-to-cart" data-model="00025" data-price="110">Add to cart</button>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="store__card">
+            <img src="assets/store-4.png" alt="product" />
+            <h4>Model no- 00055</h4>
+            <h3>Price- $140</h3>
+            <button class="btn add-to-cart" data-model="00055" data-price="140">Add to cart</button>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="store__card">
+            <img src="assets/store-5.png" alt="product" />
+            <h4>Model no- 00015</h4>
+            <h3>Price- $100</h3>
+            <button class="btn add-to-cart" data-model="00015" data-price="100">Add to cart</button>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="store__card">
+            <img src="assets/store-6.png" alt="product" />
+            <h4>Model no- 00065</h4>
+            <h3>Price- $150</h3>
+            <button class="btn add-to-cart" data-model="00065" data-price="150">Add to cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <div id="customer-support" class="customer-support">
+    <button id="support-btn"><i class="ri-customer-service-2-line"></i></button>
+    <div id="support-content" class="support-content">
+      <p>Contact us at: support@shubhaudiohub.com</p>
+      <p>Call us: +91 8004950477 </p>
+    </div>
+  </div>
+
+  <div id="cart-modal" class="cart-modal">
+    <div class="cart-content">
+      <h2>Your Cart</h2>
+      <span class="close-cart">&times;</span>
+      <div id="cart-items"></div>
+      <p id="cart-total">Total: $0</p>
+      <button class="btn" id="checkout-btn">Checkout</button>
+    </div>
+  </div>
+
+  <footer class="section__container footer__container">
+    <img src="assets/logo-dark.png" alt="logo" />
+    <ul class="footer__socials">
+      <li><a href="#"><i class="ri-facebook-circle-fill"></i></a></li>
+      <li><a href="#"><i class="ri-instagram-line"></i></a></li>
+      <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+      <li><a href="#"><i class="ri-linkedin-fill"></i></a></li>
+    </ul>
+  
+    <div class="footer__bar">
+      Copyright © 2025 Shubh Audio Hub. All rights reserved
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
